@@ -1,0 +1,92 @@
+/* project0.scss */
+/* project0.css */
+/* variables */
+$nav-background: #f2f2f2;
+$padding-sm: 4px;
+$padding-md: 8px;
+$padding-lg: 13px;
+$p-padding-md: 5px;
+
+/* Inheritance */
+%sm-body-padding {
+    padding: $p-padding-md;
+}
+
+.home-welcome {
+    @extend %sm-body-padding;
+    color: #666666;
+}
+
+.home-message {
+    @extend %sm-body-padding;
+    color: #737373;
+    border-style: solid;
+    border-width: 1px 0px 0px 0px;
+}
+
+.navbar {
+    background-color: $nav-background;
+}
+
+.nav-link {
+    color: #404040;
+    // font-weight: bold;
+}
+
+.nav-link:hover {
+    color: #999999;
+}
+
+.img-responsive {
+    border-radius: 5px;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media (max-width: 600px) {
+    .navbar, .page-body {
+        padding: $padding-sm;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media (min-width: 600px) {
+    .navbar, .page-body {
+        padding: $padding-sm;
+    }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media (min-width: 768px) {
+    .navbar, .page-body {
+        padding: $padding-md;
+    }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    .navbar, .page-body {
+        padding: $padding-lg;
+    }
+
+    div {
+        h1, p {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        .home-message {
+             font-size: 1.5em;
+        }
+     }
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .navbar, .page-body {
+        padding: $padding-lg;
+    }
+}
