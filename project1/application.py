@@ -29,23 +29,15 @@ def index():
     if 'username' in session:
         username = session['username']
         full_name = session['full_name']
-        # check database for the user
-        # perhaps check password too for better security
-        # full_name = db.execute("SELECT full_name FROM users WHERE username = :username",
-        #                         {'username': username}).fetchone()
-        # if full_name == None:
-        #     """Redirect to login page."""
-        #     return render_template("index.html")
-        # else:
-        """Redirect to home page."""
         return render_template("home.html", full_name=full_name)
 
     # regular login
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+
         # retrieve details based on the username
-        user = db.execute("SELECT full_name, username, password FROM users WHERE username = :username",
+        user = db.execute("SELECT id, full_name, username, password FROM users WHERE username = :username",
                     {'username': username}).fetchone()
         # if user doesn't exist
         if user is None:
@@ -55,6 +47,7 @@ def index():
             if password_check:
                 session['username'] = user.username
                 session['full_name'] = user.full_name
+                session['id'] = user.id
                 return render_template("home.html", full_name=user.full_name)
 
     # normal page visit, uses GET method
@@ -108,12 +101,41 @@ def home():
             # regular home page
             return render_template("home.html", full_name=full_name)
 
-
-
-@app.route("/book/<string:isbn>")
-def book():
+@app.route("/book/<string:isbn>", methods=["POST", "GET"])
+def book(isbn):
     """Show book details (including reviews from the Goodreads API)."""
-    return render_template("book.html")
+
+    # check if user is logged in
+    if 'username' not in session:
+        return render_template('index.html')
+
+    # full_name = session['full_name']
+    prompt = '' # for multiple submissions
+
+    if request.method == "POST":
+        user_id = session["id"]
+        # bar multiple submissions
+        check = db.execute("SELECT review FROM reviews where user_id = :id AND book_isbn =:isbn ",
+                            {"id": user_id, "isbn": isbn})
+        if check != None:
+            prompt = "You have already submitted a review for this book."
+        else:
+            review = request.form.get("review")
+            rating = request.form.get("rating")
+            # add review to database
+            db.execute("INSERT INTO reviews (review, rating, user_id, book_isbn)" \
+                        "VALUES (:review, :rating, :user_id, :isbn)",
+                        {"review": review, "rating": rating, "user_id": user_id, "isbn": isbn})
+            # commit changes
+            db.commit()
+
+    # book details
+    book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+    reviews = db.execute("SELECT review, rating, full_name FROM reviews " \
+                         "INNER JOIN users ON users.id = reviews.user_id where book_isbn = :isbn",
+                         {"isbn": isbn}).fetchall()
+
+    return render_template("book.html", prompt=prompt, book=book, reviews=reviews)
 
 @app.route("/api/<string:isbn>")
 def api():
