@@ -1,3 +1,7 @@
+# ____util.py___________
+# Credits: Alessandro Molina
+# https://www.vitoshacademy.com/hashing-passwords-in-python/
+
 import hashlib, binascii, os
 
 def hash_password(password):
