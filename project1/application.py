@@ -28,23 +28,24 @@ def index():
     # if already logged in
     if 'username' in session:
         username = session['username']
+        full_name = session['full_name']
         # check database for the user
         # perhaps check password too for better security
-        user_id = db.execute("SELECT id FROM users WHERE username = :username",
-                                {'username': username}).fetchone()
-        if user_id == None:
-            """Redirect to login page."""
-            return render_template("index.html")
-        else:
-            """Redirect to home page."""
-            return render_template("home.html")
+        # full_name = db.execute("SELECT full_name FROM users WHERE username = :username",
+        #                         {'username': username}).fetchone()
+        # if full_name == None:
+        #     """Redirect to login page."""
+        #     return render_template("index.html")
+        # else:
+        """Redirect to home page."""
+        return render_template("home.html", full_name=full_name)
 
     # regular login
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
         # retrieve details based on the username
-        user = db.execute("SELECT username, password FROM users WHERE username = :username",
+        user = db.execute("SELECT full_name, username, password FROM users WHERE username = :username",
                     {'username': username}).fetchone()
         # if user doesn't exist
         if user is None:
@@ -52,22 +53,62 @@ def index():
         else:
             password_check = verify_password(user.password, password)
             if password_check:
-                session['username'] = username
-                return render_template("home.index")
+                session['username'] = user.username
+                session['full_name'] = user.full_name
+                return render_template("home.html", full_name=user.full_name)
 
     # normal page visit, uses GET method
     if request.method == "GET":
         return render_template('index.html')
 
-@app.route("/register")
+@app.route("/register", methods=["POST", "GET"])
 def register():
     """Allows a new user to register to the website."""
-    return render_template("register.html")
+    if request.method == "GET":
+        return render_template("register.html")
+
+    if request.method == "POST":
+        # get registrants Crendentials
+        username = request.form.get("username")
+        full_name = request.form.get("full_name")
+        password = request.form.get("password")
+
+        # create a hash password
+        password = hash_password(password)
+
+        # add user to database
+        db.execute("INSERT INTO users (full_name, username, password) VALUES (:full_name, :username, :password)",
+                    {"full_name": full_name, "username": username, "password": password})
+        db.commit()
+
+        # login into your account
+        return render_template('index.html', message="Account Created, Please Login")
 
 @app.route("/home")
 def home():
     """The home page on the website with the search functionality."""
-    return render_template("home.index")
+    # check if user is logged in, and get full name
+    if 'username' not in session:
+        return render_template("index.html")
+
+    username = session['username']
+    full_name = session['full_name']
+    if full_name:
+        # if a search
+        search_term = request.args.get('search')
+        if search_term:
+            books = db.execute("SELECT * FROM books WHERE isbn LIKE :search_term or title LIKE :search_term or author LIKE :search_term",
+                                        {'search_term': f"%{search_term}%"}).fetchall()
+            if books != None:
+                return render_template("home.html", full_name=full_name, books=books)
+            else:
+                error = "Your search did not return any results."
+                return render_template("home.html", full_name=full_name, error=error)
+        else:
+            # regular home page
+            return render_template("home.html", full_name=full_name)
+
+
 
 @app.route("/book/<string:isbn>")
 def book():

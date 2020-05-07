@@ -2,13 +2,20 @@
 <html>
   <head>
     <title>Books | {% block title %} {% endblock %}</title>
-    <link rel="stylesheet" href="<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css')}}">
   </head>
   <body>
     <div class="container">
       <h1>{% block heading %}{% endblock %}</h1>
       {% block body %}{% endblock %}
+      <footer>
+              <div class="row">
+                  <div class="col">
+                      <p class="text-center">&copy; 2020 Books</p>
+                  </div>
+              </div>
+          </footer>
     </div>
   </body>
 </html>
