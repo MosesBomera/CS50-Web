@@ -13,6 +13,7 @@ if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
 # Configure session to use filesystem
+app.secret_key = 'u893j2wmsldrircsmc5encx'
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -21,7 +22,7 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-@app.route("/", methods=['POST'])
+@app.route("/", methods=['POST', 'GET'])
 def index():
     """Renders the home page with the login form."""
     # if already logged in
@@ -37,7 +38,7 @@ def index():
         else:
             """Redirect to home page."""
             return render_template("home.html")
-    
+
     # regular login
     if request.method == "POST":
         username = request.form.get("username")
@@ -53,6 +54,10 @@ def index():
             if password_check:
                 session['username'] = username
                 return render_template("home.index")
+
+    # normal page visit, uses GET method
+    if request.method == "GET":
+        return render_template('index.html')
 
 @app.route("/register")
 def register():

@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+  Login
+{% endblock %}
+
+{% block heading %}
+  Login
+{% endblock%}
+
+{% block body %}
+<form class="" action="{{ url_for('index') }}" method="post">
+  <input type="text" name="username" placeholder="username">
+  <input type="password" name="password" placeholder="Password">
+  <button type="button" name="button">Login</button>
+</form>
+
+{% if error %}
+  <p class="error-message">{{ error }}</p>
+{% endif %}
+<a class="create-account" href="{{ url_for('register') }}">Create account</a>
+{% endblock %}
