@@ -19,6 +19,13 @@
   <i>{{ book.isbn }}</i> {{ book.title }} by {{ book.author }}
   <i>Published</i> {{ book.year }}
 
+  <!-- goodreads api results -->
+  {% if goodreads %}
+    <h3>from goodreads</h3>
+    <p>average rating: {{ goodreads["average_ratig"] }}</p>
+    <p>number of ratings: {{ goodreads["work_ratings_count"] }}</p>
+  {%  endif %}
+
   {% if reviews %}
   {% for review in reviews %}
       <ul>

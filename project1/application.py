@@ -1,10 +1,11 @@
 import os
 
-from flask import Flask, session, render_template, request, redirect
+from flask import Flask, session, render_template, request, redirect, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from util import hash_password, verify_password
+import requests
 
 app = Flask(__name__)
 
@@ -19,7 +20,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Set up database
-engine = create_engine(os.getenv("DATABASE_URL"))
+engine = create_engine(os.getenv("DATABASE_URL"), pool_size=20, max_overflow=0)
 db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/", methods=['POST', 'GET'])
@@ -120,9 +121,16 @@ def book(isbn):
     if 'username' not in session:
         return render_template('index.html')
 
-    # full_name = session['full_name']
-    prompt = '' # for multiple submissions
+    # Goodreads api access
+    res = requests.get("https://www.goodreads.com/book/review_counts.json",
+                        params={"key": "ocupx05S7CqcE2wULHregQ", "isbns": isbn})
 
+    GOODREADS = dict()
+    if res.status_code == 200:
+        GOODREADS["average_rating"] = res.json()["books"][0]["average_rating"]
+        GOODREADS["work_ratings_count"] = res.json()["books"][0]["work_ratings_count"]
+
+    prompt = '' # for multiple submissions
     if request.method == "POST":
         user_id = session["id"]
         # bar multiple submissions
@@ -146,8 +154,28 @@ def book(isbn):
                          "INNER JOIN users ON users.id = reviews.user_id where book_isbn = :isbn",
                          {"isbn": isbn}).fetchall()
 
-    return render_template("book.html", prompt=prompt, book=book, reviews=reviews)
+    return render_template("book.html", goodreads=GOODREADS, prompt=prompt, book=book, reviews=reviews)
 
-@app.route("/api/<string:isbn>")
-def api():
-    """Handles api requests to the website."""
+@app.route("/api/<string:isbn>", methods=["GET"])
+def api(isbn):
+    """Handles API requests to the website."""
+    book = db.execute("SELECT * FROM books WHERE isbn = :isbn",
+                        {"isbn": isbn}).fetchone()
+    if book is None:
+        return jsonify({"Error": "ISBN not found"}), 404
+
+    review_count = db.execute("SELECT COUNT(reviews) FROM reviews WHERE book_isbn = :isbn",
+                                {"isbn": isbn}).fetchone() # possible it is none
+    # return print(review_count)
+    average_rating = db.execute("SELECT AVG(rating) FROM reviews WHERE book_isbn = :isbn",
+                                {"isbn": isbn}).fetchone() # possible it is none
+
+    # get book details
+    return jsonify({
+        "title": book.title,
+        "author": book.author,
+        "year": book.year,
+        "isbn": book.isbn,
+        "review_count": int(review_count.count),
+        "average_rating": float(average_rating.avg)
+    })
