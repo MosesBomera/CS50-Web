@@ -54,6 +54,17 @@ def index():
     if request.method == "GET":
         return render_template('index.html')
 
+@app.route("/logout")
+def logout():
+    """Allows a user to logout of the website."""
+
+    # remove all credentials associated to the user
+    session.pop('username', None)
+    session.pop('full_name', None)
+    session.pop('id', None)
+
+    return render_template("index.html")
+
 @app.route("/register", methods=["POST", "GET"])
 def register():
     """Allows a new user to register to the website."""

@@ -4,11 +4,17 @@
   {{ book.title }}
 {% endblock %}
 
+
+{% block body %}
+{% include 'partials/navbar.html' %}
 {% block heading %}
   <h1 class="book-title">{{ book.title }}</h1>
 {% endblock %}
 
-{% block body %}
+{% if prompt %}
+  <p>{{ prompt }}</p>
+{% endif %}
+
 <div class="">
   <i>{{ book.isbn }}</i> {{ book.title }} by {{ book.author }}
   <i>Published</i> {{ book.year }}
@@ -25,7 +31,7 @@
 
   <form class="" action="{{ url_for('book', isbn=book.isbn)}}" method="post">
     <div class="form-group">
-      <textarea class="form-control" name="review" rows="5">
+      <textarea class="form-control" name="review" rows="5" placeholder="">
         Enter your thoughts on this piece of art...
       </textarea>
     </div>
@@ -43,10 +49,5 @@
         <button class="btn btn-primary">Submit Review</button>
     </div>
   </form>
-  
-  {% if prompt %}
-    <p>{{ prompt }}</p>
-  {% endif %}
-
 </div>
 {% endblock %}

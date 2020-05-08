@@ -4,11 +4,12 @@
   Home
 {% endblock %}
 
+{% block body %}
+{% include 'partials/navbar.html' %}
 {% block heading %}
   <h1 class="home-hi">Hi, {{ full_name }}</h1>
 {% endblock %}
 
-{% block body %}
 <form class="search-form" action="{{ url_for('home') }}" method="get">
   <div class="form-group">
     <input class="form-control" type="text" name="search" placeholder="Enter Author's name, ISBN or book title" required>

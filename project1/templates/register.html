@@ -4,11 +4,12 @@
   Register
 {% endblock %}
 
+{% block body %}
+
 {% block heading %}
-  Register
+  <h1 class="register">Register</h1>
 {% endblock %}
 
-{% block body %}
 <form class="register-form" action="{{ url_for('register') }}" method="post">
   <div class="form-group">
     <input class="form-control" type="text" name="full_name" placeholder="John Doe" required>

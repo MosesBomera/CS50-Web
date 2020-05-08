@@ -4,11 +4,11 @@
   Login
 {% endblock %}
 
-{% block heading %}
-  Login
-{% endblock%}
 
 {% block body %}
+{% block heading %}
+  <h1 class="login">Login</h1>
+{% endblock%}
 
 {% if message %}
   <p class="account-success">{{ message }}</p>
