@@ -7,21 +7,31 @@
 {% block body %}
 
 {% block heading %}
-  <h1 class="register">Register</h1>
-{% endblock %}
+<div id="index">
+  <div class="register-form">
 
-<form class="register-form" action="{{ url_for('register') }}" method="post">
-  <div class="form-group">
-    <input class="form-control" type="text" name="full_name" placeholder="John Doe" required>
+    <h1 class="register">Register</h1>
+  {% endblock %}
+
+  <form action="{{ url_for('register') }}" method="post">
+    <div class="form-group">
+      <input class="form-control" type="text" name="full_name" placeholder="John Doe" required>
+    </div>
+    <div class="form-group">
+      <input class="form-control" type="text" name="username" placeholder="Username" required>
+    </div>
+    <div class="form-group">
+        <input class="form-control" type="password" name="password" placeholder="Password" required>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-primary">Create Account</button>
+    </div>
+  </form>
+
+  <div class="create-account">
+      <a  href="{{ url_for('logout') }}">Login</a>
   </div>
-  <div class="form-group">
-    <input class="form-control" type="text" name="username" placeholder="Username" required>
+
   </div>
-  <div class="form-group">
-      <input class="form-control" type="password" name="password" placeholder="Password" required>
-  </div>
-  <div class="form-group">
-    <button class="btn btn-primary">Create Account</button>
-  </div>
-</form>
+</div>
 {% endblock %}

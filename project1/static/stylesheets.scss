@@ -1,0 +1,162 @@
+/* stylesheets.scss */
+$nav-background: #f2f2f2;
+$padding-sm: 4px;
+$padding-md: 8px;
+$padding-lg: 13px;
+$theme-color: #333333;
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+}
+
+.container {
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+
+.container #index {
+  padding: 100px;
+}
+
+/* login-form */
+.container {
+  .login-form, .regsiter-form {
+    width: 310px;
+    // height: 0px;
+    background-color: #fff;
+    border-radius: 5px;
+    margin: auto;
+
+    h1 {
+      width: 70%;
+      color: #666666;
+      font-size: 32px;
+      margin: 28px auto;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    input {
+          padding: 20px;
+          margin-bottom: 10px;
+          border-radius: 3px;
+          text-align: center;
+          width: 100%;
+          font-size: 18px;
+          transition: border .2s, background-color .2s;
+    }
+  }
+}
+
+form {
+  text-align: center;
+}
+
+.create-account {
+			text-align: center;
+      padding: 10px;
+      text-decoration: underline;
+}
+
+.create-account a:link,
+.create-account a:visited{
+			// font-size: 12px;
+			color: #777;
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active {
+  background-color: $theme-color;
+  border-color: $theme-color;
+}
+
+.navbar {
+  background-color: $nav-background;
+  font-size: 1
+}
+
+.nav-link {
+  color: #0d0d0d;
+}
+
+.nav-link:hover {
+  color: #999999;
+}
+
+.copyright {
+  color: $theme-color;
+}
+
+.by-line {
+  color: #737373;
+}
+
+.good-reads {
+  // color: #927F64;
+  color: #00ace6;
+}
+
+/* Search results */
+.search-results {
+  list-style-type: none;
+  text-align: center;
+  margin-top: 13px;
+
+  li {
+    font-size: 17px;
+    border-bottom: 1px solid #f2f2f2;
+    padding: 4px;
+  }
+}
+
+.reviews  {
+  text-align: justify;
+}
+
+.by-line-review, .ratings{
+  color: #005673;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media (max-width: 600px) {
+    .navbar, .page-body {
+        padding: $padding-sm;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media (min-width: 600px) {
+    .navbar, .page-body {
+        padding: $padding-sm;
+    }
+
+    .navbar {
+      border-radius: 0px 0px 5px 5px;
+    }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media (min-width: 768px) {
+    .navbar, .page-body {
+        padding: $padding-md;
+    }
+
+    .page-body p {
+      font-size: 17px;
+    }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    .navbar, .page-body {
+        padding: $padding-lg;
+    }
+
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .navbar, .page-body {
+        padding: $padding-lg;
+    }
+}

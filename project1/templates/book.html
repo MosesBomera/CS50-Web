@@ -7,54 +7,59 @@
 
 {% block body %}
 {% include 'partials/navbar.html' %}
-{% block heading %}
-  <h1 class="book-title">{{ book.title }}</h1>
-{% endblock %}
+<div class="page-body">
+  {% block heading %}
+    <h2 class="book-title">{{ book.title }}</h2>
+  {% endblock %}
 
-{% if prompt %}
-  <p>{{ prompt }}</p>
-{% endif %}
-
-<div class="">
-  <i>{{ book.isbn }}</i> {{ book.title }} by {{ book.author }}
-  <i>Published</i> {{ book.year }}
-
-  <!-- goodreads api results -->
-  {% if goodreads %}
-    <h3>from goodreads</h3>
-    <p>average rating: {{ goodreads["average_ratig"] }}</p>
-    <p>number of ratings: {{ goodreads["work_ratings_count"] }}</p>
-  {%  endif %}
-
-  {% if reviews %}
-  {% for review in reviews %}
-      <ul>
-        <li> Rating: {{ review.rating }}</li>
-        <li> {{ review.review }}</li>
-        <li> By {{ review.full_name }}</li>
-      </ul>
-  {% endfor %}
+  {% if prompt %}
+  <div class="alert alert-warning" role="alert">
+    {{ prompt }}
+  </div>
   {% endif %}
 
-  <form class="" action="{{ url_for('book', isbn=book.isbn)}}" method="post">
-    <div class="form-group">
-      <textarea class="form-control" name="review" rows="5" placeholder="">
-        Enter your thoughts on this piece of art...
-      </textarea>
+  <div class="">
+   <p class="by-line">by <i>{{ book.author }}</i> {{ book.isbn }}, <i>Pub.</i> {{ book.year }}</p>
+
+    <!-- goodreads api results -->
+    {% if goodreads %}
+      <p>
+        <span class="good-reads">from goodreads</span>
+        <i>Average Rating:</i> {{ goodreads["average_rating"] }}
+        <i>No of ratings:</i> {{ goodreads["work_ratings_count"] }}
+      </p>
+    {%  endif %}
+
+    {% if reviews %}
+    <div class="reviews">
+      {% for review in reviews %}
+        <p>
+          <span class="by-line-review"><i>{{ review.full_name }} says;</i> </span>
+          {{ review.review }}
+          <i class="ratings">Rating: {{ review.rating }}</i>
+        </p>
+      {% endfor %}
     </div>
-    <p>Rating</p>
-    <div class="form-group">
-            <select class="form-control" name="rating" required>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-        </div>
-    <div class="form-group">
-        <button class="btn btn-primary">Submit Review</button>
-    </div>
-  </form>
+    {% endif %}
+
+    <form class="" action="{{ url_for('book', isbn=book.isbn)}}" method="post">
+      <div class="form-group">
+        <textarea class="form-control" name="review" rows="5" placeholder="Thoughts? ..." required></textarea>
+      </div>
+      <p>Rating</p>
+      <div class="form-group">
+              <select class="form-control" name="rating" required>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+          </div>
+      <div class="form-group">
+          <button class="btn btn-primary">Submit Review</button>
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

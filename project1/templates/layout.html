@@ -3,7 +3,7 @@
   <head>
     <title>Books | {% block title %} {% endblock %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets.css')}}">
     <script type="text/javascript">
       if ( window.history.replaceState ) {
             window.history.replaceState( null, null, window.location.href );
@@ -12,15 +12,18 @@
   </head>
   <body>
   <div class="container">
+
       {% block body %}
 
-      {% block heading %}{% endblock %}
+      {% block heading %}
+      {% endblock %}
 
       {% endblock %}
+
       <footer>
               <div class="row">
                   <div class="col">
-                      <p class="text-center">&copy; 2020 Books</p>
+                      <p class="text-center copyright">&copy; 2020 Books</p>
                   </div>
               </div>
           </footer>

@@ -6,27 +6,38 @@
 
 
 {% block body %}
-{% block heading %}
-  <h1 class="login">Login</h1>
-{% endblock%}
+<div id="index">
+  <div class="login-form">
+    {% block heading %}
+      <h1 class="login">Login</h1>
+    {% endblock%}
 
-{% if message %}
-  <p class="account-success">{{ message }}</p>
-{% endif %}
+    {% if message %}
+    <div class="alert alert-success" role="alert">
+      {{ message }}
+    </div>
+    {% endif %}
 
-<form class="login-form" action="{{ url_for('index') }}" method="post">
-  <div class="form-group">
-    <input class="form-control" type="text" name="username" placeholder="username" required>
+    <form action="{{ url_for('index') }}" method="post">
+    <div class="form-group">
+      <input class="form-control" type="text" name="username" placeholder="Username" required>
+    </div>
+
+    <div class="form-group">
+      <input class="form-control" type="password" name="password" placeholder="Password" required>
+    </div>
+    <button class="btn btn-primary">Login</button>
+    </form>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="create-account">
+  			<a  href="{{ url_for('register') }}">Create Account</a>
+  	</div>
   </div>
-
-  <div class="form-group">
-    <input class="form-control" type="password" name="password" placeholder="Password" required>
-  </div>
-  <button class="btn btn-primary">Login</button>
-</form>
-
-{% if error %}
-  <p class="error-message">{{ error }}</p>
-{% endif %}
-<a class="create-account" href="{{ url_for('register') }}">Create Account</a>
+</div>
 {% endblock %}

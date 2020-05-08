@@ -121,21 +121,12 @@ def book(isbn):
     if 'username' not in session:
         return render_template('index.html')
 
-    # Goodreads api access
-    res = requests.get("https://www.goodreads.com/book/review_counts.json",
-                        params={"key": "ocupx05S7CqcE2wULHregQ", "isbns": isbn})
-
-    GOODREADS = dict()
-    if res.status_code == 200:
-        GOODREADS["average_rating"] = res.json()["books"][0]["average_rating"]
-        GOODREADS["work_ratings_count"] = res.json()["books"][0]["work_ratings_count"]
-
     prompt = '' # for multiple submissions
     if request.method == "POST":
         user_id = session["id"]
         # bar multiple submissions
         check = db.execute("SELECT review FROM reviews where user_id = :id AND book_isbn =:isbn ",
-                            {"id": user_id, "isbn": isbn})
+                            {"id": user_id, "isbn": isbn}).fetchone()
         if check != None:
             prompt = "You have already submitted a review for this book."
         else:
@@ -153,6 +144,15 @@ def book(isbn):
     reviews = db.execute("SELECT review, rating, full_name FROM reviews " \
                          "INNER JOIN users ON users.id = reviews.user_id where book_isbn = :isbn",
                          {"isbn": isbn}).fetchall()
+
+    # Goodreads api access
+    res = requests.get("https://www.goodreads.com/book/review_counts.json",
+                        params={"key": "ocupx05S7CqcE2wULHregQ", "isbns": isbn})
+
+    GOODREADS = dict()
+    if res.status_code == 200:
+        GOODREADS["average_rating"] = res.json()["books"][0]["average_rating"]
+        GOODREADS["work_ratings_count"] = res.json()["books"][0]["work_ratings_count"]
 
     return render_template("book.html", goodreads=GOODREADS, prompt=prompt, book=book, reviews=reviews)
 

@@ -6,29 +6,34 @@
 
 {% block body %}
 {% include 'partials/navbar.html' %}
-{% block heading %}
-  <h1 class="home-hi">Hi, {{ full_name }}</h1>
-{% endblock %}
 
-<form class="search-form" action="{{ url_for('home') }}" method="get">
-  <div class="form-group">
-    <input class="form-control" type="text" name="search" placeholder="Enter Author's name, ISBN or book title" required>
+<div class="page-body">
+  {% block heading %}
+    <h2 class="home-hi">Hi, {{ full_name }}</h2>
+  {% endblock %}
+
+  <form class="search-form" action="{{ url_for('home') }}" method="get">
+    <div class="form-group">
+      <input class="form-control" type="text" name="search" placeholder="Enter Author's name, ISBN or book title" required>
+    </div>
+    <button class="btn btn-primary">Search</button>
+  </form>
+
+  {% if error %}
+  <div class="alert alert-danger" role="alert">
+      {{ error }}
   </div>
-  <button class="btn btn-primary">Search</button>
-</form>
+  {% endif %}
 
-{% if error %}
-  <p class="error">{{ error }}</p>
-{% endif %}
-
-{% if books %}
-  <ul>
-    {% for book in books %}
-      <li>
-        <a href="{{ url_for('book', isbn=book.isbn)}}"> {{ book.isbn }} </a> {{ book.title }}  by {{ book.author }}
-      </li>
-    {% endfor %}
-  </ul>
-{% endif %}
+  {% if books %}
+    <ul class="search-results">
+      {% for book in books %}
+        <li>
+          <a href="{{ url_for('book', isbn=book.isbn)}}"> {{ book.isbn }} </a> {{ book.title }}  by {{ book.author }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
 
 {% endblock %}
