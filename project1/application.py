@@ -50,6 +50,8 @@ def index():
                 session['full_name'] = user.full_name
                 session['id'] = user.id
                 return render_template("home.html", full_name=user.full_name)
+            else:
+                return render_template("index.html", error="Invalid Crendentials")
 
     # normal page visit, uses GET method
     if request.method == "GET":
@@ -64,7 +66,7 @@ def logout():
     session.pop('full_name', None)
     session.pop('id', None)
 
-    return render_template("index.html")
+    return render_template("index.html", message="Logged Out Successfully.")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
