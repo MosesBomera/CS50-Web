@@ -5,36 +5,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize socket
   var socket = io();
-  // var channel = '';
-  //
-  // document.querySelector('#channel-list-item').addEventListener('click', e => {
-  //     e.preventDefault();
-  //     element = e.target;
-  //     var channel = element.innerHTML;
-  //
-  //     // Continue to load messages
-  //     const request = new XMLHttpRequest();
-  //     request.open('GET', `/channel/${channel}`);
-  //
-  //     request.onload = () => {
-  //       // messages
-  //       const messages = JSON.parse(request.responseText);
-  //       var x;
-  //
-  //       const message_area = document.querySelector('#messages');
-  //       for (x in messages) {
-  //         const div = document.createElement('div');
-  //         div.className = 'message-body';
-  //         div.innerHTML = x.timestamp + ' ' + x.sent_by + ' ' + x.message;
-  //         message_area.appendChild(div);
-  //       };
-  //     };
-  //
-  //     // send request
-  //     request.send();
-  //     return false;
-  //
-  // });
+  var channel = '';
+
+  document.querySelector('.channel-list-item').addEventListener('click', e => {
+      e.preventDefault();
+      element = e.target;
+      channel = element.innerHTML.trim();
+
+      // Continue to load messages
+      const request = new XMLHttpRequest();
+      request.open('GET', `/channel/${channel}`);
+
+      request.onload = () => {
+        // messages
+        const messages = JSON.parse(request.responseText);
+        var x;
+
+        const message_area = document.querySelector('#messages');
+        message_area.innerHTML = '';
+        for (x of messages) {
+          const div = document.createElement('div');
+          div.className = 'message-body';
+          div.innerHTML = x.timestamp + ' ' + x.sent_by + ' ' + x.message;
+          message_area.appendChild(div);
+        };
+      };
+
+      // send request
+      request.send();
+      return false;
+
+  });
 
   document.querySelector('#chat-form').onsubmit = (e) => {
     // prevent page from reloading
@@ -42,12 +43,12 @@ document.addEventListener('DOMContentLoaded', () => {
     var d = new Date();
     const timestamp = ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + d.getFullYear() + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
     const message = document.querySelector('#message-text').value;
-
     // Send the message
     socket.emit('chat message', {
       'timestamp': timestamp,
       'displayname': displayname,
-      'message': message
+      'message': message,
+      'channel': channel,
     });
 
     // Clear the input field
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
   socket.on('chat message', function(data) {
     const div = document.createElement('div');
     div.className = 'message-body';
-    div.innerText = data.timestamp + ' ' + data.displayname + ' ' + data.message;
+    div.innerText = data.timestamp + ' ' + data.sent_by + ' ' + data.message;
     document.querySelector('#messages').append(div);
   });
 

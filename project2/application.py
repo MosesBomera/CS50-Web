@@ -25,7 +25,9 @@ CHANNELS = {
         "helloworld" : {
         "created_by": "moses",
         "messages": [
-            {"timestamp": "17:03", "sent_by":"moses", "message":"hi"}
+            {"timestamp": "17:03", "sent_by":"moses", "message":"hi"},
+            {"timestamp": "17:03", "sent_by":"allen", "message":"homies"},
+            {"timestamp": "12:23", "sent_by":"moses", "message":"hi, allen"},
         ]},
         "helloworld2" : {
         "created_by": "moses",
@@ -109,8 +111,15 @@ def channel(channel_name):
 def connection(data):
     temp = {}
     temp["timestamp"] = data["timestamp"]
+    temp["sent_by"] = data["displayname"]
     temp["message"] = data["message"]
-    temp["displayname"] = data["displayname"]
+
+    channel = CHANNELS.get(data['channel'])
+
+    if len(channel.get('messages')) >= 100:
+        # Remove the last element
+        channel.get('messages').pop(0)
+    channel.get('messages').append(temp)
 
     io.emit('chat message', temp, broadcast=True)
 
