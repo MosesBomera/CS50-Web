@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+  <ul class="channels-list">
+    {% for channel in channels %}
+      <li>
+        <a href="{{ url_for('channel', channel_name=channel) }}">
+          {{ channel}}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

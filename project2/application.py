@@ -1,6 +1,7 @@
 from flask import Flask, render_template, session, request, jsonify
 from flask_socketio import SocketIO, emit, send, join_room, leave_room
 from flask_session import Session
+from util import logged_in
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = 'u893j2wmsldrircsmc5encx'
@@ -25,20 +26,21 @@ CHANNELS = {
         "helloworld" : {
         "created_by": "moses",
         "messages": [
-            {"timestamp": "17:03", "sent_by":"moses", "message":"hi"},
-            {"timestamp": "17:03", "sent_by":"allen", "message":"homies"},
-            {"timestamp": "12:23", "sent_by":"moses", "message":"hi, allen"},
+            {"timestamp": "12-05-2020 17:01", "sent_by":"Moses", "message":"Hi, Allen"},
+            {"timestamp": "12-05-2020 17:05", "sent_by":"Allen", "message":"Hi, Moses! How are you doing?"},
+            {"timestamp": "12-05-2020 17:15", "sent_by":"Moses", "message":"I'm great, How about you?"},
         ]},
         "helloworld2" : {
         "created_by": "moses",
         "messages": [
-            {"timestamp": "17:03", "sent_by":"moses", "message":"hello, musa"}
+            {"timestamp": "12-05-2020 17:01", "sent_by":"Moses", "message":"Hey Team!"},
         ]},
         "helloworld34" : {
         "created_by": "house44",
         "messages": [
-            {"timestamp": "17:03", "sent_by":"allen", "message":"homies"},
-            {"timestamp": "12:23", "sent_by":"moses", "message":"hi, allen"},
+            {"timestamp": "12-05-2020 17:01", "sent_by":"Moses", "message":"Hi, Allen"},
+            {"timestamp": "12-05-2020 17:05", "sent_by":"Allen", "message":"Hi, Moses! How are you doing?"},
+            {"timestamp": "12-05-2020 17:15", "sent_by":"Moses", "message":"I'm great, How about you?"},
         ]}
 
 }
@@ -61,9 +63,9 @@ def index():
     if 'displayname' in session:
         displayname = session['displayname']
 
-        # send user to the chat room, for now.
+        # send user to the channels page
         return render_template(
-            "chatroom.html",
+            "channels.html",
             displayname=displayname,
             channels=channels)
 
@@ -82,7 +84,7 @@ def index():
             USERS.append(displayname)
 
         return render_template(
-            "chatroom.html",
+            "channels.html",
             displayname=displayname,
             channels=channels)
 
@@ -96,35 +98,45 @@ def logout():
     # redirect to log in page
     return render_template("index.html")
 
-@app.route("/channel/<string:channel_name>", methods=["GET"])
+@app.route("/channel/<string:channel_name>")
+@logged_in
 def channel(channel_name):
     """Returns the messages from a given channel asynchronously."""
 
+    # save the current channel
+    session['curr_channel'] = channel_name
     # Get channel details
     channel = CHANNELS.get(channel_name)
     messages = channel.get("messages")
 
     # send a JSON asynchronously
-    return jsonify(messages)
+    # return jsonify(messages)
+    return render_template(
+        "channel.html",
+        channels = list(CHANNELS.keys()),
+        messages=messages)
 
-@io.on('chat message')
-def connection(data):
-    temp = {}
-    temp["timestamp"] = data["timestamp"]
-    temp["sent_by"] = data["displayname"]
-    temp["message"] = data["message"]
+@io.on('send message')
+def chat(data):
+    """ Receives the message and sends it to the defined room (channel)."""
+    message = {}
+    message["timestamp"] = data["timestamp"]
+    message["sent_by"] = session['displayname']
+    message["message"] = data["message"]
 
-    channel = CHANNELS.get(data['channel'])
+    curr_channel = session['curr_channel']
+    channel = CHANNELS.get(curr_channel)
 
     if len(channel.get('messages')) >= 100:
-        # Remove the last element
+        # Remove the first(oldest) element
         channel.get('messages').pop(0)
-    channel.get('messages').append(temp)
+    channel.get('messages').append(message)
 
-    io.emit('chat message', temp, broadcast=True)
+    io.emit('receive message', message, room=curr_channel)
 
 @io.on('add channel')
 def add_channel(data):
+    # Retain this, channel created and available to everyone immediately.
     newchannel = data["newchannel"]
     created_by = data["created_by"]
     CHANNELS[newchannel] = {
@@ -133,18 +145,31 @@ def add_channel(data):
     }
     emit('create channel', {"channel": newchannel}, broadcast=True)
 
-@io.on('join')
-def join_room(data):
+@io.on('join', namespace='/')
+def join_channel():
     """When a user joins a new channel."""
-    displayname = session['displayname']
-    room = data['room']
-    join_room(room)
-    send(displayname + 'joined channel', room=room)
 
-@io.on('leave')
-def leave_room(data):
-    """When a user leaves the given channel."""
+    # Get the user and their current channel
     displayname = session['displayname']
-    room = data['room']
-    leave_room(room)
-    send(displayname + ' left channel', room=room)
+    channel = session['curr_channel']
+
+    # join them to the channel
+    join_room(channel)
+
+    emit('channel update', {
+        'displayname': displayname,
+        'message': displayname + 'joined channel'},
+        room = channel)
+
+@io.on('leave', namespace='/')
+def leave_channel():
+    """When a user leaves the given channel."""
+
+    channel = session['curr_channel']
+
+    # leave the channel
+    leave_room(channel)
+
+    emit('channel update', {
+        'mesage': session['displayname'] + 'has left'},
+        room = channel)

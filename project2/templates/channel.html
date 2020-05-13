@@ -2,19 +2,22 @@
 {% block body %}
 <section class="">
   <h1>
-    hi, <span id="curr-displayname">{{ displayname }}</span>
+    hi, <span id="curr-displayname">{{ session['displayname'] }}</span>
   </h1>
   <div class="row">
      <!-- column with channels list -->
      <div id="channel-area" class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
       {% if channels %}
         <ul id="channels-list">
+
           {% for channel in channels %}
+
             <li>
               <a class="channel-list-item" href="{{ url_for('channel', channel_name=channel) }}">
                 {{ channel }}
              </a>
-            </li>
+           </li>
+
           {% endfor %}
         </ul>
       {% else %}
@@ -22,16 +25,26 @@
          <p>No channels, create one to get started.</p>
        </div>
      {% endif %}
+
      <form id="channel-form" action="">
         <input id="channel-name" required>
-        <button class="btn btn-info">Create Channel</button>
+        <button class="btn btn-info">+ Channel</button>
      </form>
      </div>
 
      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
        <div id="messages">
+          {% for message in messages %}
 
+            <div class="message-box">
+                <span class="displayname">{{ message['sent_by']}}</span> //
+                <span class="timestamp">{{ message['timestamp']}}</span> <br>
+                <p class="message-body">{{ message['message']}}</p>
+            </div>
+
+           {% endfor %}
        </div>
+
        <form id="chat-form" action="">
          <input id="message-text" autocomplete="off" required>
          <button class="btn btn-info">Send</button>
