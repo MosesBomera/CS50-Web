@@ -1,14 +1,16 @@
 {% extends "layout.html" %}
 {% block body %}
-<section class="">
-  <h1>
-    hi, <span id="curr-displayname">{{ session['displayname'] }}</span>
-  </h1>
+{% include 'partials/navbar.html' %}
+
+<div class="page-body">
+  <h2 class="channel-displayname">
+    Hi, {{ session['displayname'] }} // {{ session['curr_channel']}}
+  </h2>
   <div class="row">
      <!-- column with channels list -->
      <div id="channel-area" class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
       {% if channels %}
-        <ul id="channels-list">
+        <ul class="channels-list">
 
           {% for channel in channels %}
 
@@ -26,31 +28,35 @@
        </div>
      {% endif %}
 
-     <form id="channel-form" action="">
-        <input id="channel-name" required>
-        <button class="btn btn-info">+ Channel</button>
+     <!-- form to add a channel -->
+     <form id="add-channel" action="{{ url_for('create_channel') }}" method="post">
+       <input class="flack-input" type="text" name="newchannel" placeholder="Add channel" value="">
+       <button class="btn btn-info">+ Channel</button>
      </form>
      </div>
 
      <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
        <div id="messages">
-          {% for message in messages %}
+         {% if  messages %}
+         {% for message in messages %}
 
             <div class="message-box">
-                <span class="displayname">{{ message['sent_by']}}</span> //
-                <span class="timestamp">{{ message['timestamp']}}</span> <br>
+                <span class="displayname">{{ message['sent_by']}}</span>
+                <span class="timestamp">{{ ' // ' + message['timestamp']}}</span> <br>
                 <p class="message-body">{{ message['message']}}</p>
             </div>
+          {% else %}
 
-           {% endfor %}
+         {% endfor %}
+        {% endif %}
        </div>
 
        <form id="chat-form" action="">
-         <input id="message-text" autocomplete="off" required>
+         <input class="flack-input" id="message-text" autocomplete="off" required>
          <button class="btn btn-info">Send</button>
        </form>
      </div>
   </div>
-</section>
+</div>
 
 {% endblock %}

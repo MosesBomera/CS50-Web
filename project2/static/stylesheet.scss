@@ -1,1 +1,181 @@
+/* stylesheets.scss */
+$nav-background: #7f8c8d;
+$padding-sm: 4px;
+$padding-md: 8px;
+$padding-lg: 13px;
+$theme-color: #333333;
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+}
+
+.container {
+  font-family: Georgia, Times, "Times New Roman", serif;
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active {
+  background-color: $theme-color;
+  border-color: $theme-color;
+}
+
+.nav-content-center {
+  margin: auto;
+}
+
+.navbar {
+  background-color: $nav-background;
+}
+
+.nav-link {
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.displayname-input {
+  display: block;
+  width: 300px;
+}
+
+.home-banner {
+  margin: auto;
+  font-size: 20px;
+  padding: 10px;
+  color: #ffffff;
+}
+
+%channels-list-styles {
+  color: #fff;
+  background-color: #1abc9c;
+  padding: 9px;
+  border-radius: 2px;
+  display: block;
+  margin: auto;
+}
+
+.channels-list {
+  list-style-type: none;
+  padding: 10px;
+
+  li {
+    // border-bottom: solid 1px #f2f2f2;
+    padding: 6.5px;
+  }
+
+  li a {
+    @extend %channels-list-styles;
+  }
+
+  li a:hover {
+    color: #fff;
+  }
+}
+
+.channels-list {
+  margin-bottom: 0px;
+}
+
+.channels #add-channel,
+#channels-page-list li a {
+  width: 500px;
+}
+
+.channel-notification {
+  padding: 5px 15px 5px 15px;
+  color: #12876f;
+}
+
+.channel-displayname {
+  color: #2980b9;
+}
+
+.page-body {
+  font-size: 18px;
+}
+
+/* chat */
+.message-box {
+  background-color: #78edd5;
+  padding: 15px;
+  margin-bottom: 5px;
+  border-radius: 3px;
+}
+
+%form-style {
+  margin: auto auto 10px auto;
+  border-radius: 3px;
+  font-size: 18px;
+  border: 1px solid #b3b3b3;
+}
+
+.displayname-input {
+  @extend %form-style;
+  padding: 5px;
+}
+
+/* Awesome chat and + channel button */
+#chat-form, #add-channel {
+  @extend %form-style;
+  display: flex;
+  flex-direction: row;
+  padding: 1.5px;
+}
+
+.flack-input {
+  flex-grow: 2;
+  border: none;
+}
+
+.flack-input:focus {
+  outline: none;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media (max-width: 600px) {
+    .navbar, .page-body {
+        padding: $padding-sm;
+    }
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media (min-width: 600px) {
+    .navbar, .page-body {
+        padding: $padding-sm;
+    }
+
+    .navbar {
+      border-radius: 0px 0px 5px 5px;
+    }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media (min-width: 768px) {
+    .navbar, .page-body {
+        padding: $padding-md;
+    }
+
+    .page-body p {
+      font-size: 17px;
+    }
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    .navbar, .page-body {
+        padding: $padding-lg;
+    }
+
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .navbar, .page-body {
+        padding: $padding-lg;
+    }
+}

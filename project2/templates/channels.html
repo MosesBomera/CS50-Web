@@ -4,13 +4,33 @@
 {% endblock %}
 
 {% block body %}
-  <ul class="channels-list">
-    {% for channel in channels %}
-      <li>
-        <a href="{{ url_for('channel', channel_name=channel) }}">
-          {{ channel}}
-        </a>
-      </li>
-    {% endfor %}
-  </ul>
+{% include 'partials/navbar.html' %}
+
+<div class="text-center channels page-body">
+
+  {% if prompt %}
+  <div class="alert alert-success" role="alert">
+    {{ prompt }}
+  </div>
+  {% endif %}
+
+  <!-- form to add a channel -->
+  <form id="add-channel" action="{{ url_for('create_channel') }}" method="post">
+    <input class="flack-input" type="text" placeholder="Add new channel" value="">
+    <button class="btn btn-info">+ Channel</button>
+  </form>
+
+  <div id="channels-page-list">
+    <ul class="channels-list">
+      {% for channel in channels %}
+        <li>
+          <a href="{{ url_for('channel', channel_name=channel) }}">
+            {{ channel}}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
 {% endblock %}

@@ -33,13 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add message to DOM
         const div = addElement('div', 'message-box');
         const span1 = addElement('span', 'displayname', message.sent_by);
-        const span2 = addElement('span', 'timestamp', message.timestamp);
+        const span2 = addElement('span', 'timestamp',' // ' + message.timestamp);
         const p = addElement('p', 'message-body', message.message);
         div.appendChild(span1);
+        // Add // using CSS
         div.appendChild(span2);
         div.appendChild(document.createElement('br'));
         div.appendChild(p);
         document.querySelector('#messages').append(div);
+  });
+
+  // Announce joining or leaving
+  socket.on('channel update', message => {
+      const div = addElement('div', 'channel-notification', message.message);
+      document.querySelector('#messages').append(div);
+
+      // Remember channel
+      localStorage.setItem('curr_channel', message.channel)
   });
 
   // Helper function

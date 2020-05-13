@@ -1,8 +1,24 @@
 {% extends "layout.html" %}
 
 {% block body %}
-  <form class="" action="{{ url_for('index') }}" method="post">
-    <input type="text" name="displayname" value="">
-    <button class="btn btn-info">Create Profile</button>
-  </form>
+
+<div class="text-center navbar">
+  <div class="home-banner justify-content-center">
+      Flack: CS50 Web!😎
+  </div>
+</div>
+
+<div class="text-center page-body">
+
+  {% if error %}
+      <div class="alert alert-danger" role="alert">
+          {{ error }}
+      </div>
+  {% endif %}
+
+    <form class="" action="{{ url_for('index') }}" method="post">
+      <input class="displayname-input" type="text" name="displayname" placeholder="Enter displayname to start ..." value=""><button class="btn btn-info">Create Profile</button>
+    </form>
+</div>
+
 {% endblock %}

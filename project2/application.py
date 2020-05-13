@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, request, jsonify
-from flask_socketio import SocketIO, emit, send, join_room, leave_room
+from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_session import Session
 from util import logged_in
 
@@ -23,19 +23,19 @@ CHANNELS = {
 }
 """
 CHANNELS = {
-        "helloworld" : {
+        "ChannelOne" : {
         "created_by": "moses",
         "messages": [
             {"timestamp": "12-05-2020 17:01", "sent_by":"Moses", "message":"Hi, Allen"},
             {"timestamp": "12-05-2020 17:05", "sent_by":"Allen", "message":"Hi, Moses! How are you doing?"},
             {"timestamp": "12-05-2020 17:15", "sent_by":"Moses", "message":"I'm great, How about you?"},
         ]},
-        "helloworld2" : {
+        "ChannelTwo" : {
         "created_by": "moses",
         "messages": [
             {"timestamp": "12-05-2020 17:01", "sent_by":"Moses", "message":"Hey Team!"},
         ]},
-        "helloworld34" : {
+        "ChannelThree" : {
         "created_by": "house44",
         "messages": [
             {"timestamp": "12-05-2020 17:01", "sent_by":"Moses", "message":"Hi, Allen"},
@@ -45,9 +45,9 @@ CHANNELS = {
 
 }
 
-# messages; keep only a hundred messages at a time
-MESSAGE_LIMIT = 100
-MESSAGES = [None] * MESSAGE_LIMIT
+# # messages; keep only a hundred messages at a time
+# MESSAGE_LIMIT = 100
+# MESSAGES = [None] * MESSAGE_LIMIT
 
 # users
 USERS = []
@@ -63,10 +63,11 @@ def index():
     if 'displayname' in session:
         displayname = session['displayname']
 
+        prompt = f"{displayname}, create a new channel or join an existing one below!"
         # send user to the channels page
         return render_template(
             "channels.html",
-            displayname=displayname,
+            prompt=prompt,
             channels=channels)
 
     # If a new user, create a profile
@@ -83,9 +84,11 @@ def index():
             session['displayname'] = displayname
             USERS.append(displayname)
 
+        prompt = f"Welcome {displayname}, create a new channel or join an existing one below!"
+
         return render_template(
             "channels.html",
-            displayname=displayname,
+            prompt=prompt,
             channels=channels)
 
     # New user, return create profile
@@ -101,7 +104,7 @@ def logout():
 @app.route("/channel/<string:channel_name>")
 @logged_in
 def channel(channel_name):
-    """Returns the messages from a given channel asynchronously."""
+    """Returns the messages from a given channel."""
 
     # save the current channel
     session['curr_channel'] = channel_name
@@ -109,12 +112,42 @@ def channel(channel_name):
     channel = CHANNELS.get(channel_name)
     messages = channel.get("messages")
 
+    # Remove current channel from the list
+    channels = list(CHANNELS.keys())
+    channels.remove(channel_name)
+
     # send a JSON asynchronously
     # return jsonify(messages)
     return render_template(
         "channel.html",
-        channels = list(CHANNELS.keys()),
+        channels = channels,
         messages=messages)
+
+@app.route("/create_channel", methods=["POST"])
+@logged_in
+def create_channel():
+
+    newchannel = request.form.get('newchannel')
+    created_by = session['displayname']
+
+    # update session
+    session['curr_channel'] = newchannel
+    CHANNELS[newchannel] = {
+        "created_by": created_by,
+        "messages": []
+    }
+
+    # Get channel details
+    channel = CHANNELS.get(newchannel)
+    messages = channel.get("messages")
+
+    # Remove current channel from the list
+    channels = list(CHANNELS.keys())
+    channels.remove(newchannel)
+
+    # Take user to channel
+    return render_template('channel.html',
+                        channels=channels)
 
 @io.on('send message')
 def chat(data):
@@ -134,16 +167,16 @@ def chat(data):
 
     io.emit('receive message', message, room=curr_channel)
 
-@io.on('add channel')
-def add_channel(data):
-    # Retain this, channel created and available to everyone immediately.
-    newchannel = data["newchannel"]
-    created_by = data["created_by"]
-    CHANNELS[newchannel] = {
-        "created_by": created_by,
-        "messages": MESSAGES
-    }
-    emit('create channel', {"channel": newchannel}, broadcast=True)
+# @io.on('add channel')
+# def add_channel(data):
+#     # channel created and available to everyone immediately.
+#     newchannel = data["newchannel"]
+#     created_by = session['displayname']
+#     CHANNELS[newchannel] = {
+#         "created_by": created_by,
+#         "messages": MESSAGES
+#     }
+#     emit('create channel', {"channel": newchannel}, broadcast=True)
 
 @io.on('join', namespace='/')
 def join_channel():
@@ -156,9 +189,9 @@ def join_channel():
     # join them to the channel
     join_room(channel)
 
-    emit('channel update', {
-        'displayname': displayname,
-        'message': displayname + 'joined channel'},
+    emit('channel update',
+        {'message': displayname + ' joined channel.',
+         'channel': channel },
         room = channel)
 
 @io.on('leave', namespace='/')
@@ -170,6 +203,7 @@ def leave_channel():
     # leave the channel
     leave_room(channel)
 
-    emit('channel update', {
-        'mesage': session['displayname'] + 'has left'},
+    emit('channel update',
+        {'message': session['displayname'] + ' left.',
+         'channel': channel },
         room = channel)

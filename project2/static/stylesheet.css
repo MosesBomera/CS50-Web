@@ -1,3 +1,163 @@
+/* stylesheets.scss */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+}
 
+.container {
+  font-family: Georgia, Times, "Times New Roman", serif;
+}
+
+.btn-primary, .btn-primary:hover, .btn-primary:active {
+  background-color: #333333;
+  border-color: #333333;
+}
+
+.nav-content-center {
+  margin: auto;
+}
+
+.navbar {
+  background-color: #7f8c8d;
+}
+
+.nav-link {
+  color: #ffffff;
+  font-size: 20px;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.displayname-input {
+  display: block;
+  width: 300px;
+}
+
+.home-banner {
+  margin: auto;
+  font-size: 20px;
+  padding: 10px;
+  color: #ffffff;
+}
+
+.channels-list li a {
+  color: #fff;
+  background-color: #1abc9c;
+  padding: 9px;
+  border-radius: 2px;
+  display: block;
+  margin: auto;
+}
+
+.channels-list {
+  list-style-type: none;
+  padding: 10px;
+}
+.channels-list li {
+  padding: 6.5px;
+}
+.channels-list li a:hover {
+  color: #fff;
+}
+
+.channels-list {
+  margin-bottom: 0px;
+}
+
+.channels #add-channel,
+#channels-page-list li a {
+  width: 500px;
+}
+
+.channel-notification {
+  padding: 5px 15px 5px 15px;
+  color: #12876f;
+}
+
+.channel-displayname {
+  color: #2980b9;
+}
+
+.page-body {
+  font-size: 18px;
+}
+
+/* chat */
+.message-box {
+  background-color: #78edd5;
+  padding: 15px;
+  margin-bottom: 5px;
+  border-radius: 3px;
+}
+
+#chat-form, #add-channel, .displayname-input {
+  margin: auto auto 10px auto;
+  border-radius: 3px;
+  font-size: 18px;
+  border: 1px solid #b3b3b3;
+}
+
+.displayname-input {
+  padding: 5px;
+}
+
+/* Awesome chat and + channel button */
+#chat-form, #add-channel {
+  display: flex;
+  flex-direction: row;
+  padding: 1.5px;
+}
+
+.flack-input {
+  flex-grow: 2;
+  border: none;
+}
+
+.flack-input:focus {
+  outline: none;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media (max-width: 600px) {
+  .navbar, .page-body {
+    padding: 4px;
+  }
+}
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media (min-width: 600px) {
+  .navbar, .page-body {
+    padding: 4px;
+  }
+
+  .navbar {
+    border-radius: 0px 0px 5px 5px;
+  }
+}
+/* Medium devices (landscape tablets, 768px and up) */
+@media (min-width: 768px) {
+  .navbar, .page-body {
+    padding: 8px;
+  }
+
+  .page-body p {
+    font-size: 17px;
+  }
+}
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .navbar, .page-body {
+    padding: 13px;
+  }
+}
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  .navbar, .page-body {
+    padding: 13px;
+  }
+}
 
 /*# sourceMappingURL=stylesheet.css.map */
