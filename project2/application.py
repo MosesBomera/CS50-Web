@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, request, jsonify
+from flask import Flask, render_template, session, request, redirect, url_for
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from flask_session import Session
 from util import logged_in
@@ -12,7 +12,7 @@ Session(app)
 
 # channels
 """
-____________CHANNEL_VARIABLE_STRUCTURE________________
+_______________________CHANNEL_VARIABLE_STRUCTURE_______________________________
 CHANNELS = {
     "channel_name": {
         "created_by": "displayname",
@@ -62,13 +62,18 @@ def index():
     # If old user
     if 'displayname' in session:
         displayname = session['displayname']
+        if 'curr_channel' in session:
+            last_channel = session['curr_channel']
+            # Remember the last channel
+            return redirect(url_for('channel', channel_name=last_channel))
+        else:
+            prompt = f"{displayname}, create a new channel or join an existing one below!"
+            # send user to the channels page
+            return render_template(
+                "channels.html",
+                prompt=prompt,
+                channels=channels)
 
-        prompt = f"{displayname}, create a new channel or join an existing one below!"
-        # send user to the channels page
-        return render_template(
-            "channels.html",
-            prompt=prompt,
-            channels=channels)
 
     # If a new user, create a profile
     if request.method == "POST":
