@@ -62,14 +62,10 @@ def index():
     # If old user
     if 'displayname' in session:
         displayname = session['displayname']
-        if 'curr_channel' in session:
-            last_channel = session['curr_channel']
-            # Remember the last channel
-            return redirect(url_for('channel', channel_name=last_channel))
-        else:
-            prompt = f"{displayname}, create a new channel or join an existing one below!"
-            # send user to the channels page
-            return render_template(
+            
+        prompt = f"{displayname}, create a new channel or join an existing one below!"
+        # send user to the channels page
+        return render_template(
                 "channels.html",
                 prompt=prompt,
                 channels=channels)
